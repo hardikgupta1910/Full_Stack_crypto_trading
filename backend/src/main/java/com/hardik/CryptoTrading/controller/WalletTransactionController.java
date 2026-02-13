@@ -31,10 +31,7 @@ public class WalletTransactionController {
 		return walletTransactionService.getTransactionById(id);
 	}
 
-//	@PostMapping("/wallet")
-//	public List<WalletTransaction> getTransactionsByWallet(@RequestBody Wallet wallet) {
-//		return walletTransactionService.getTransactionsForWallet(wallet);
-//	}
+
 	
 	@PostMapping("/wallet")
 	public List<WalletTransaction> getTransactionsByWallet(@RequestBody Map<String, Long> body) {

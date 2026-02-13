@@ -1,6 +1,5 @@
 package com.hardik.CryptoTrading.service;
 
-import com.hardik.CryptoTrading.domain.VerificationType;
 import com.hardik.CryptoTrading.model.User;
 
 import java.util.List;

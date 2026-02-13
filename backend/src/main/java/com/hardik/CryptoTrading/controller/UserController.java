@@ -2,9 +2,7 @@ package com.hardik.CryptoTrading.controller;
 
 
 import com.hardik.CryptoTrading.model.User;
-
 import com.hardik.CryptoTrading.service.UserService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +34,6 @@ public class UserController {
 	@GetMapping("/api/admin/users")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<User>> getAllUsers() {
-		// You would create a method in your UserService to find all users.
 		List<User> users = userService.findAllUsers();
 		return new ResponseEntity<>(users, HttpStatus.OK);
 	}

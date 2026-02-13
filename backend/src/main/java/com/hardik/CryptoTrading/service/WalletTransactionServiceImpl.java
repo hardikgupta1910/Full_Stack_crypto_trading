@@ -1,13 +1,10 @@
 package com.hardik.CryptoTrading.service;
 
-import com.hardik.CryptoTrading.model.Wallet;
+
 import com.hardik.CryptoTrading.model.WalletTransaction;
 import com.hardik.CryptoTrading.repository.WalletTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,10 +26,6 @@ public class WalletTransactionServiceImpl implements WalletTransactionService  {
 		return walletTransactionRepository.findById(id)
 				.orElseThrow(() -> new Exception("Transaction not found with id: " + id));
 	}
-//		@Override
-//	public List<WalletTransaction> getTransactionsForWallet(Wallet wallet) {
-//		return walletTransactionRepository.findByWallet(wallet);
-//	}
 	
 	@Override
 	public List<WalletTransaction> getTransactionsForWallet(Long walletId) {

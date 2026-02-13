@@ -39,14 +39,7 @@ public class WalletServiceImpl implements com.hardik.CryptoTrading.service.Walle
 	
 	
 	
-//	@Override
-//	public Wallet addBalance(Wallet wallet, Long money) {
-//		BigDecimal balance= wallet.getBalance();
-//		BigDecimal newBalance=balance.add(BigDecimal.valueOf(money));
-//
-//		wallet.setBalance((newBalance));
-//		return walletRepository.save(wallet);
-//	}
+
 	
 	@Override
 	public Wallet addBalance(Wallet wallet, Long amount) {
@@ -56,16 +49,7 @@ public class WalletServiceImpl implements com.hardik.CryptoTrading.service.Walle
 	}
 
 
-//	public Wallet addBalance(Wallet wallet, Long amount) {
-//		if (wallet.getBalance() == null) {
-//			wallet.setBalance(BigDecimal.ZERO);
-//		}
-//
-//		BigDecimal updatedBalance = wallet.getBalance().add(BigDecimal.valueOf(amount));
-//		wallet.setBalance(updatedBalance);
-//
-//		return walletRepository.save(wallet);
-//	}
+
 	
 	
 	@Override
@@ -78,35 +62,8 @@ public class WalletServiceImpl implements com.hardik.CryptoTrading.service.Walle
 		throw  new Exception("Wallet not found");
 	}
 
-//	@Override
-//	public Wallet walletToWalletTransfer(User sender, Wallet recieverWallet, Long amount) throws Exception {
-//
-//		//Sender Wallet
-//
-//		Wallet senderWallet=getUserWallet(sender);
-//
-//		if(senderWallet.getBalance().compareTo(BigDecimal.valueOf(amount))<0){
-//			throw new Exception("Insufficient Balance");
-//		}
-//
-//		BigDecimal senderBalance=senderWallet
-//				.getBalance()
-//				.subtract(BigDecimal.valueOf(amount));
-//
-//		senderWallet.setBalance(senderBalance);
-//		walletRepository.save(senderWallet);
-//
-//		// update Receiver Wallet
-//
-//		BigDecimal receiverBalance=recieverWallet
-//				.getBalance()
-//				.add(BigDecimal.valueOf(amount));
-//		recieverWallet.setBalance(receiverBalance);
-//		walletRepository.save(recieverWallet);
-//
-//
-//		return senderWallet;
-//	}
+
+
 	
 	
 	
@@ -131,29 +88,7 @@ public class WalletServiceImpl implements com.hardik.CryptoTrading.service.Walle
 	}
 	
 	
-	//@Override
-//	public Wallet payOrderPayment(Order order, User user) throws Exception {
-//
-//		// we have to create wallet transaction as well
-//
-//		Wallet wallet=getUserWallet(user);
-//
-//		if(order.getOrderType().equals(OrderType.BUY)){
-//			BigDecimal newBalance=wallet.getBalance().subtract(order.getPrice());
-//			if(newBalance.compareTo(order.getPrice())<0){
-//				throw new Exception("Insufficient funds for this transaction");
-//			}
-//			wallet.setBalance(newBalance);
-//		}
-//		else {
-//			BigDecimal newBalance= wallet.getBalance().add(order.getPrice());
-//			wallet.setBalance(newBalance);
-//		}
-//		walletRepository.save(wallet);
-//
-//
-//		return wallet;
-//	}
+
 	
 	@Override
 	public Wallet payOrderPayment(Order order, User user) throws Exception {

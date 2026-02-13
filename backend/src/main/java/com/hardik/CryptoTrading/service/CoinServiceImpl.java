@@ -47,7 +47,7 @@ public class CoinServiceImpl implements CoinService{
 			ResponseEntity<String> response= restTemplate.exchange(url, HttpMethod.GET,entity,String.class);
 			
 			List<Coin> coinList=objectMapper.readValue(response.getBody(),
-					new TypeReference<List<Coin>>(){});
+					new TypeReference< List<Coin> >(){});
 			
 			return coinList;
 			
@@ -123,7 +123,7 @@ public class CoinServiceImpl implements CoinService{
 			coin.setName(jsonNode.get("name").asText());
 			coin.setSymbol(jsonNode.get("symbol").asText());
 			coin.setImage(jsonNode.get("image").get("large").asText());
-//
+
 			JsonNode marketData=jsonNode.get("market_data");
 			
 			coin.setCurrentPrice(marketData.get("current_price").get("usd").asDouble());
@@ -133,7 +133,7 @@ public class CoinServiceImpl implements CoinService{
 			
 			coin.setTotalVolume(marketData.get("total_volume").get("usd").asLong());
 
-//
+
 			coin.setHigh24h(marketData.get("high_24h").get("usd").asDouble());
 			coin.setLow24h(marketData.get("low_24h").get("usd").asDouble());
 			

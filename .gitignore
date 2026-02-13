@@ -15,3 +15,7 @@ Thumbs.db
 # Env files
 .env
 .env.*
+
+
+# Local env config
+backend/src/main/resources/application-local.properties

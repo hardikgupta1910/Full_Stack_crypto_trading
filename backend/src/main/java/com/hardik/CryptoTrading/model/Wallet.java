@@ -2,7 +2,6 @@ package com.hardik.CryptoTrading.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.math.BigDecimal;
 
 @Entity

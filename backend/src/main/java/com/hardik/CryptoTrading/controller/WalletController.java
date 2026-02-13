@@ -105,17 +105,7 @@ public class WalletController {
 	
 	
 	
-//	@PatchMapping("/api/wallet/test/add/amount/{amount}")
-//	public ResponseEntity<Wallet> addTestBalance(
-//			@PathVariable Long amount,
-//			@RequestHeader("Authorization") String jwt) throws Exception {
-//
-//		User user = userService.findUserProfileByJwt(jwt);
-//		Wallet wallet = walletService.getUserWallet(user);
-//		Wallet updatedWallet = walletService.addBalance(wallet, amount);
-//
-//		return new ResponseEntity<>(updatedWallet, HttpStatus.OK);
-//	}
+
 	
 	@PatchMapping("/api/wallet/test/add/amount/{amount}")
 	public ResponseEntity<Wallet> addTestBalance(
