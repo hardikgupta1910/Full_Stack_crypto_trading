@@ -2,19 +2,20 @@ package com.hardik.CryptoTrading.controller;
 
 import com.hardik.CryptoTrading.model.User;
 import com.hardik.CryptoTrading.model.Wallet;
-import com.hardik.CryptoTrading.model.WalletTransaction;
 import com.hardik.CryptoTrading.model.Withdrawal;
 import com.hardik.CryptoTrading.service.WalletService;
 import com.hardik.CryptoTrading.service.UserService;
 import com.hardik.CryptoTrading.service.WithdrawalService;
-import org.hibernate.grammars.hql.HqlParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import java.math.BigDecimal;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Transactional
 @RestController
 @RequestMapping("/api/withdrawal")
 public class WithdrawalController {
@@ -39,6 +40,10 @@ public class WithdrawalController {
 		Wallet userWallet = walletService.getUserWallet(user);
 		
 		Withdrawal withdrawal = withdrawalService.requestWithdrawal(amount, user);
+		
+		if (userWallet.getBalance().compareTo(BigDecimal.valueOf(amount)) < 0) {
+			throw new Exception("Insufficient balance");
+		}
 		walletService.addBalance(userWallet, -withdrawal.getAmount());
 		
 		
@@ -55,7 +60,10 @@ public class WithdrawalController {
 		User user= userService.findUserProfileByJwt(jwt);
 		Withdrawal withdrawal=withdrawalService.proceedWithdrawal(id,accept);
 		
-		Wallet userWallet=walletService.getUserWallet(user);
+//		Wallet userWallet=walletService.getUserWallet(user);
+		
+		Wallet userWallet = walletService.getUserWallet(withdrawal.getUser());
+		
 		
 		if(!accept){
 			walletService.addBalance(userWallet, withdrawal.getAmount());

@@ -30,26 +30,54 @@ public class WithdrawalServiceImpl implements  WithdrawalService{
 		  return withdrawalRepository.save(withdrawal);
 	}
 	
+//	@Override
+//	public Withdrawal proceedWithdrawal(Long withdrawalId, boolean accept) throws Exception {
+//
+//		Optional<Withdrawal> withdrawal=withdrawalRepository.findById(withdrawalId);
+//
+//		if(withdrawal.isEmpty()){
+//			throw  new Exception("withdrawal not found");
+//		}
+//		Withdrawal withdrawal1=withdrawal.get();
+//
+//		withdrawal1.setDate(LocalDateTime.now());
+//
+//		if(accept){
+//			withdrawal1.setStatus(WithdrawalStatus.SUCCESS);
+//		}else{
+//			withdrawal1.setStatus(WithdrawalStatus.PENDING);
+//		}
+//
+//		   return withdrawalRepository.save(withdrawal1);
+//	}
+	
 	@Override
 	public Withdrawal proceedWithdrawal(Long withdrawalId, boolean accept) throws Exception {
 		
-		Optional<Withdrawal> withdrawal=withdrawalRepository.findById(withdrawalId);
+		Optional<Withdrawal> withdrawalOpt =
+				withdrawalRepository.findById(withdrawalId);
 		
-		if(withdrawal.isEmpty()){
-			throw  new Exception("withdrawal not found");
-		}
-		Withdrawal withdrawal1=withdrawal.get();
-		
-		withdrawal1.setDate(LocalDateTime.now());
-		
-		if(accept){
-			withdrawal1.setStatus(WithdrawalStatus.SUCCESS);
-		}else{
-			withdrawal1.setStatus(WithdrawalStatus.PENDING);
+		if (withdrawalOpt.isEmpty()) {
+			throw new Exception("Withdrawal not found");
 		}
 		
-		   return withdrawalRepository.save(withdrawal1);
+		Withdrawal withdrawal = withdrawalOpt.get();
+		
+		if (withdrawal.getStatus() != WithdrawalStatus.PENDING) {
+			throw new Exception("Withdrawal already processed");
+		}
+		
+		withdrawal.setDate(LocalDateTime.now());
+		
+		if (accept) {
+			withdrawal.setStatus(WithdrawalStatus.SUCCESS);
+		} else {
+			withdrawal.setStatus(WithdrawalStatus.DECLINE);
+		}
+		
+		return withdrawalRepository.save(withdrawal);
 	}
+	
 	
 	@Override
 	public List<Withdrawal> getUsersWithdrawalHistory(User user) {
