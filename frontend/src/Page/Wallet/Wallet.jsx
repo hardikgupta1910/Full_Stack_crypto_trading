@@ -26,7 +26,7 @@ import {
   WalletIcon,
 } from "lucide-react";
 import { ReloadIcon, UpdateIcon } from "@radix-ui/react-icons";
-import TopUpForm from "./TopUpForm";
+import TopUpForm from "./TopupForm";
 import WithdrawalForm from "./WithdrawalForm";
 import TransferForm from "./TransferForm";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -44,20 +44,7 @@ const Wallet = () => {
   const dispatch = useDispatch();
   const { wallet } = useSelector((store) => store);
 
-  // useEffect(() => {
-  //   const jwt = localStorage.getItem("jwt");
-  //   console.log("JWT at useEffect:", jwt);
-
-  //   dispatch(getUserWallet(jwt)).then((res) => {
-  //     console.log("Fetched wallet:", res);
-  //     const walletId = res?.id;
-
-  //     if (walletId) {
-  //       dispatch(getWalletTransactions({ jwt, walletId }));
-  //     }
-  //   });
-  // }, []);
-
+ 
   const handleFetchUserWallet = () => {
     dispatch(getUserWallet(localStorage.getItem("jwt")));
   };

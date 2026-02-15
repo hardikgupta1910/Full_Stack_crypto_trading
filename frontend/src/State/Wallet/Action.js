@@ -4,53 +4,7 @@ export const WITHDRAWAL_REQUEST = "WITHDRAWAL_REQUEST";
 export const WITHDRAWAL_SUCCESS = "WITHDRAWAL_SUCCESS";
 export const WITHDRAWAL_FAILURE = "WITHDRAWAL_FAILURE";
 
-// export const getUserWallet = (jwt) => async (dispatch) => {
-//   dispatch({ type: types.GET_USER_WALLET_REQUEST });
 
-//   try {
-//     const response = await api.get(`/api/wallet`, {
-//       headers: {
-//         Authorization: `Bearer ${jwt}`,
-//       },
-//     });
-
-//     dispatch({
-//       type: types.GET_USER_WALLET_SUCCESS,
-//       payload: response.data,
-//     });
-//     console.log("user wallet", response.data);
-//   } catch (error) {
-//     console.log(error);
-//     dispatch({
-//       type: types.GET_USER_WALLET_FAILURE,
-//       error: error.message,
-//     });
-//   }
-// };
-
-// export const getWalletTransactions = (jwt) => async (dispatch) => {
-//   dispatch({ type: types.GET_WALLET_TRANSACTION_REQUEST });
-
-//   try {
-//     const response = await api.post("/api/wallet/transactions", {
-//       headers: {
-//         Authorization: `Bearer ${jwt}`,
-//       },
-//     });
-
-//     dispatch({
-//       type: types.GET_WALLET_TRANSACTION_SUCCESS,
-//       payload: response.data,
-//     });
-//     console.log("wallet tarnsaction", response.data);
-//   } catch (error) {
-//     console.log(error);
-//     dispatch({
-//       type: types.GET_WALLET_TRANSACTION_FAILURE,
-//       error: error.message,
-//     });
-//   }
-// };
 
 export const getUserWallet = (jwt) => async (dispatch) => {
   console.log("getUserWallet called with JWT:", jwt);
@@ -79,36 +33,7 @@ export const getUserWallet = (jwt) => async (dispatch) => {
   }
 };
 
-// export const getWalletTransactions = (jwt) => async (dispatch, getState) => {
-//   dispatch({ type: types.GET_WALLET_TRANSACTION_REQUEST });
 
-//   try {
-//     const { wallet } = getState();
-
-//     const response = await api.post(
-//       "/api/transactions/wallet",
-//       { id: wallet.userWallet.id }, // send only wallet id
-//       {
-//         headers: {
-//           Authorization: `Bearer ${jwt}`,
-//         },
-//       }
-//     );
-
-//     console.log("wallet transaction", response.data); // should be an array
-
-//     dispatch({
-//       type: types.GET_WALLET_TRANSACTION_SUCCESS,
-//       payload: response.data, // ✅ fixed
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     dispatch({
-//       type: types.GET_WALLET_TRANSACTION_FAILURE,
-//       error: error.message,
-//     });
-//   }
-// };
 
 export const getWalletTransactions =
   ({ jwt, walletId }) =>
@@ -187,10 +112,7 @@ export const paymentHandler =
 
       window.location.href = response.data.paymentUrl;
 
-      // dispatch({
-      //   type: types.DEPOSIT_MONEY_SUCCESS,
-      //   payload: response.data,
-      // });
+     
     } catch (error) {
       console.log(error);
       dispatch({
@@ -199,35 +121,7 @@ export const paymentHandler =
       });
     }
   };
-// export const transferMoney =
-//   ({ jwt, walletId, reqData }) =>
-//   async (dispatch) => {
-//     dispatch({ type: types.TRANSFER_MONEY_REQUEST });
 
-//     try {
-//       const response = await api.get(
-//         `/api/wallet/${walletId}/transfer`,
-//         reqData,
-//         {
-//           headers: {
-//             Authorization: `Bearer ${jwt}`,
-//           },
-//         }
-//       );
-
-//       dispatch({
-//         type: types.TRANSFER_MONEY_SUCCESS,
-//         payload: response.data,
-//       });
-//       console.log("transfermoney money sent", response.data);
-//     } catch (error) {
-//       console.log(error);
-//       dispatch({
-//         type: types.TRANSFER_MONEY_FAILURE,
-//         error: error.message,
-//       });
-//     }
-//   };
 
 export const transferMoney =
   ({ jwt, walletId, reqData }) =>

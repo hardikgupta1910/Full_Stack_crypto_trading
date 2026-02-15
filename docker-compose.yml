@@ -1,0 +1,38 @@
+# version: "3.8"
+
+services:
+
+  mysql:
+    image: mysql:8
+    container_name: cryptrix-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: Trading
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build: ./backend
+    container_name: cryptrix-backend
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      - "5454:5454"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  frontend:
+    build: ./frontend
+    container_name: cryptrix-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+
+volumes:
+  mysql_data:
