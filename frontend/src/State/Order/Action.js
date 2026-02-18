@@ -27,30 +27,6 @@ export const payOrder =
     }
   };
 
-// export const getOrderById =
-//   ({ jwt, orderId }) =>
-//   async (dispatch) => {
-//     dispatch({ type: types.GET_ORDER_REQUEST });
-
-//     try {
-//       const response = await api.get(`/api/orders/${orderId}`, {
-//         headers: {
-//           Authorization: `Bearer ${jwt}`,
-//         },
-//       });
-
-//       dispatch({
-//         type: types.GET_ORDER_SUCCESS,
-//         payload: response.data,
-//       });
-//     } catch (error) {
-//       console.log("error", error);
-//       dispatch({
-//         type: types.GET_ORDER_FAILURE,
-//         error: error.message,
-//       });
-//     }
-//   };
 
 export const getALLOrdersForUser =
   ({ jwt, orderType, assetSymbol }) =>

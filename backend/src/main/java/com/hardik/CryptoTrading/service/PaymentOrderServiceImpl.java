@@ -2,9 +2,14 @@ package com.hardik.CryptoTrading.service;
 
 import com.hardik.CryptoTrading.domain.PaymentMethod;
 import com.hardik.CryptoTrading.domain.PaymentOrderStatus;
+import com.hardik.CryptoTrading.domain.WalletTransactionType;
 import com.hardik.CryptoTrading.model.PaymentOrder;
 import com.hardik.CryptoTrading.model.User;
+import com.hardik.CryptoTrading.model.Wallet;
+import com.hardik.CryptoTrading.model.WalletTransaction;
 import com.hardik.CryptoTrading.repository.PaymentOrderRepository;
+import com.hardik.CryptoTrading.repository.WalletRepository;
+import com.hardik.CryptoTrading.repository.WalletTransactionRepository;
 import com.hardik.CryptoTrading.response.PaymentResponse;
 import com.razorpay.Payment;
 import com.razorpay.PaymentLink;
@@ -18,12 +23,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 public class PaymentOrderServiceImpl implements PaymentService {
 	
 	@Autowired
 	private PaymentOrderRepository paymentOrderRepository;
 	
+	@Autowired
+	private WalletTransactionRepository walletTransactionRepository;
+	
+	@Autowired
+	private WalletRepository walletRepository;
 	
 	
 	@Value("${razorpay.api.key}")
@@ -50,38 +65,91 @@ public class PaymentOrderServiceImpl implements PaymentService {
 		return paymentOrderRepository.findById(id).orElseThrow(() -> new Exception("payment order not found"));
 	}
 	
+//	@Override
+//	public Boolean ProceedPaymentOrder(PaymentOrder paymentOrder, String paymentId) throws RazorpayException {
+//
+//		if (paymentOrder.getStatus() == null) {
+//
+//			paymentOrder.setStatus(PaymentOrderStatus.PENDING);
+//		}
+//
+//		if (paymentOrder.getStatus().equals(PaymentMethod.RAZORPAY)) {
+//			if (paymentOrder.getPaymentMethod().equals(PaymentMethod.RAZORPAY)) {
+//
+//				RazorpayClient razorpay = new RazorpayClient(apiKey, apiSecretKey);
+//				Payment payment = razorpay.payments.fetch(paymentId);
+//
+//				Integer amount = payment.get("amount");
+//				String status = payment.get("status");
+//
+//				if (status.equals("captured")) {
+//					paymentOrder.setStatus((PaymentOrderStatus.SUCCESS));
+//					return true;
+//				}
+//				paymentOrder.setStatus(PaymentOrderStatus.FAILED);
+//				paymentOrderRepository.save(paymentOrder);
+//				return false;
+//			}
+//			paymentOrder.setStatus(PaymentOrderStatus.SUCCESS);
+//			paymentOrderRepository.save(paymentOrder);
+//			return true;
+//		}
+//
+//		return false;
+//	}
+
+	
 	@Override
-	public Boolean ProceedPaymentOrder(PaymentOrder paymentOrder, String paymentId) throws RazorpayException {
-		
-		if (paymentOrder.getStatus() == null) {
-			
-			paymentOrder.setStatus(PaymentOrderStatus.PENDING);
+	public Boolean ProceedPaymentOrder(PaymentOrder paymentOrder, String paymentId, User user)
+			throws RazorpayException {
+
+		if (!paymentOrder.getPaymentMethod().equals(PaymentMethod.RAZORPAY)) {
+			return false;
 		}
-		
-		if (paymentOrder.getStatus().equals(PaymentMethod.RAZORPAY)) {
-			if (paymentOrder.getPaymentMethod().equals(PaymentMethod.RAZORPAY)) {
-				
-				RazorpayClient razorpay = new RazorpayClient(apiKey, apiSecretKey);
-				Payment payment = razorpay.payments.fetch(paymentId);
-				
-				Integer amount = payment.get("amount");
-				String status = payment.get("status");
-				
-				if (status.equals("captured")) {
-					paymentOrder.setStatus((PaymentOrderStatus.SUCCESS));
-					return true;
-				}
-				paymentOrder.setStatus(PaymentOrderStatus.FAILED);
-				paymentOrderRepository.save(paymentOrder);
-				return false;
-			}
+
+		RazorpayClient razorpay = new RazorpayClient(apiKey, apiSecretKey);
+		Payment payment = razorpay.payments.fetch(paymentId);
+
+		String status = payment.get("status");
+
+		if ("captured".equals(status)) {
+
 			paymentOrder.setStatus(PaymentOrderStatus.SUCCESS);
-			paymentOrderRepository.save(paymentOrder);
-			return true;
+			
+			Long amount = paymentOrder.getAmount();
+			BigDecimal amountBD = BigDecimal.valueOf(amount);
+			
+			Wallet wallet = walletRepository.findByUserId(user.getId());
+			List<WalletTransaction> transactions =
+					walletTransactionRepository.findByWalletId(wallet.getId());
+			
+			wallet.setBalance(wallet.getBalance().add(amountBD));
+
+			
+			if (wallet == null) {
+				throw new RuntimeException("Wallet not found");
+			}
+			
+			wallet.setBalance(wallet.getBalance().add(amountBD));
+
+			WalletTransaction txn = new WalletTransaction();
+			txn.setWallet(wallet);
+			txn.setAmount(BigDecimal.valueOf(amount));
+			txn.setType(WalletTransactionType.ADD_MONEY);
+			txn.setDate(LocalDate.now());
+
+			walletTransactionRepository.save(txn);
+			walletRepository.save(wallet);
+
+		} else {
+			paymentOrder.setStatus(PaymentOrderStatus.FAILED);
 		}
-		
-		return false;
+
+		paymentOrderRepository.save(paymentOrder);
+
+		return paymentOrder.getStatus() == PaymentOrderStatus.SUCCESS;
 	}
+	
 	
 	@Override
 	public PaymentResponse createRazorPaymentLink(User user, Long amount, Long orderId) throws RazorpayException {

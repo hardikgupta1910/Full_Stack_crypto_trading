@@ -69,7 +69,7 @@ export const depositeMoney =
     dispatch({ type: types.DEPOSIT_MONEY_REQUEST });
 
     try {
-      const response = await api.get(`/api/wallet/deposit`, null, {
+      const response = await api.put(`/api/wallet/deposit`, null, {
         params: {
           order_id: orderId,
           payment_id: paymentId,

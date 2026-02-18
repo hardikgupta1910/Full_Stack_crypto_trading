@@ -1,14 +1,11 @@
 package com.hardik.CryptoTrading.controller;
 
-import com.hardik.CryptoTrading.model.User;
-import com.hardik.CryptoTrading.model.Wallet;
+
 import com.hardik.CryptoTrading.model.WalletTransaction;
 import com.hardik.CryptoTrading.service.WalletTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController

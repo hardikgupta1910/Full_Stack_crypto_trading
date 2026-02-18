@@ -1,15 +1,19 @@
 package com.hardik.CryptoTrading.service;
 
 import com.hardik.CryptoTrading.domain.OrderType;
+import com.hardik.CryptoTrading.domain.WalletTransactionType;
 import com.hardik.CryptoTrading.model.Order;
 import com.hardik.CryptoTrading.model.User;
 import com.hardik.CryptoTrading.model.Wallet;
+import com.hardik.CryptoTrading.model.WalletTransaction;
 import com.hardik.CryptoTrading.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 
@@ -22,6 +26,9 @@ public class WalletServiceImpl implements com.hardik.CryptoTrading.service.Walle
 	
 	@Autowired
 	private WalletRepository walletRepository;
+	
+	@Autowired
+	private WalletTransactionService walletTransactionService;
 	
 	@Override
 	public Wallet getUserWallet(User user) {
@@ -67,28 +74,51 @@ public class WalletServiceImpl implements com.hardik.CryptoTrading.service.Walle
 	
 	
 	
+
+	
 	@Override
+	@Transactional
 	public Wallet walletToWalletTransfer(User sender, Wallet receiverWallet, Long amount) throws Exception {
-		if (useDummyAmount) {
-			amount = 1000L; // fixed dummy transfer amount
-		}
+		
+		BigDecimal transferAmount = BigDecimal.valueOf(amount);
 		
 		Wallet senderWallet = getUserWallet(sender);
-		if (senderWallet.getBalance().compareTo(BigDecimal.valueOf(amount)) < 0) {
-			throw new Exception("Insufficient Balance");
+		
+		if (senderWallet.getBalance().compareTo(transferAmount) < 0) {
+			throw new RuntimeException("Insufficient Balance");
 		}
 		
-		senderWallet.setBalance(senderWallet.getBalance().subtract(BigDecimal.valueOf(amount)));
-		receiverWallet.setBalance(receiverWallet.getBalance().add(BigDecimal.valueOf(amount)));
+		// Update balances
+		senderWallet.setBalance(senderWallet.getBalance().subtract(transferAmount));
+		receiverWallet.setBalance(receiverWallet.getBalance().add(transferAmount));
 		
 		walletRepository.save(senderWallet);
 		walletRepository.save(receiverWallet);
+		
+		// Create sender transaction
+		WalletTransaction senderTxn = new WalletTransaction();
+		senderTxn.setWallet(senderWallet);
+//		senderTxn.setAmount(transferAmount);
+		senderTxn.setAmount(transferAmount.negate());
+		senderTxn.setType(WalletTransactionType.WALLET_TRANSFER);
+		senderTxn.setDate(LocalDate.now());
+		
+		walletTransactionService.createTransaction(senderTxn);
+		
+		// Create receiver transaction
+		WalletTransaction receiverTxn = new WalletTransaction();
+		receiverTxn.setWallet(receiverWallet);
+		receiverTxn.setAmount(transferAmount);
+		receiverTxn.setType(WalletTransactionType.WALLET_TRANSFER);
+		receiverTxn.setDate(LocalDate.now());
+		
+		walletTransactionService.createTransaction(receiverTxn);
 		
 		return senderWallet;
 	}
 	
 	
-
+	
 	
 	@Override
 	public Wallet payOrderPayment(Order order, User user) throws Exception {

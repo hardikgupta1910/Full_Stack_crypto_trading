@@ -1,6 +1,3 @@
-
-
-
 package com.hardik.CryptoTrading.service;
 
 import com.hardik.CryptoTrading.model.PaymentDetails;
@@ -41,8 +38,5 @@ public class PaymentDetailsImpl implements PaymentDetailsService {
 				.orElseThrow(() -> new RuntimeException("No payment details found for this user."));
 	}
 	
-//	@Override
-//	public PaymentDetails getUsersPaymentDetails(User user) {
-//		return paymentDetailsRepository.findByUserId(user.getId());
-//	}
+
 }

@@ -86,7 +86,7 @@ public class WalletController {
 		
 		PaymentOrder order=paymentService.getPaymentOrderById(orderId);
 		
-		Boolean status=paymentService.ProceedPaymentOrder(order, paymentId);
+		Boolean status=paymentService.ProceedPaymentOrder(order, paymentId, user);
 		
 		PaymentResponse response = new PaymentResponse();
 //		response.setPaymentUrl("deposit success");
@@ -95,10 +95,10 @@ public class WalletController {
 			wallet.setBalance(BigDecimal.valueOf(0));
 		}
 		
-		if(status){
-			wallet=walletService.addBalance(wallet, order.getAmount());
-			
-		}
+//		if(status){
+//			wallet=walletService.addBalance(wallet, order.getAmount());
+//
+//		}
 		
 		return new ResponseEntity<>(wallet, HttpStatus.ACCEPTED);
 	}
@@ -117,7 +117,8 @@ public class WalletController {
 		
 		// Step 2: Get the user's wallet
 		Wallet wallet = walletService.getUserWallet(user);
-		
+		System.out.println("JWT user ID: " + user.getId());
+		System.out.println("Wallet ID used: " + wallet.getId());
 		// Step 3: Add balance to wallet
 		Wallet updatedWallet = walletService.addBalance(wallet, amount);
 		

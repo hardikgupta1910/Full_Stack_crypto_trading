@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import {
   Card,
@@ -44,7 +45,6 @@ const Wallet = () => {
   const dispatch = useDispatch();
   const { wallet } = useSelector((store) => store);
 
- 
   const handleFetchUserWallet = () => {
     dispatch(getUserWallet(localStorage.getItem("jwt")));
   };
@@ -54,7 +54,7 @@ const Wallet = () => {
       addTestWalletBalance({
         jwt: localStorage.getItem("jwt"),
         amount: 5000,
-      })
+      }),
     );
 
     dispatch(getUserWallet(localStorage.getItem("jwt")));
@@ -65,7 +65,7 @@ const Wallet = () => {
       getWalletTransactions({
         jwt: localStorage.getItem("jwt"),
         walletId: wallet.userWallet?.id,
-      })
+      }),
     );
   };
 
@@ -84,8 +84,27 @@ const Wallet = () => {
   }, []);
   console.log(
     "Wallet ID being used for transaction fetch:",
-    wallet.userWallet?.id
+    wallet.userWallet?.id,
   );
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    const orderId = query.get("order_id");
+    const paymentId = query.get("razorpay_payment_id");
+
+    if (orderId && paymentId) {
+      dispatch(
+        depositeMoney({
+          jwt: localStorage.getItem("jwt"),
+          orderId,
+          paymentId,
+          navigate,
+        }),
+      );
+    }
+  }, [location.search]);
 
   return (
     <div className="flex flex-col items-center max-h-[600px] overflow-y-auto ">
@@ -206,7 +225,7 @@ const Wallet = () => {
             onClick={() => {
               const jwt = localStorage.getItem("jwt");
               dispatch(
-                getWalletTransactions({ jwt, walletId: wallet.userWallet?.id })
+                getWalletTransactions({ jwt, walletId: wallet.userWallet?.id }),
               );
             }}
             className="my-4"
@@ -235,7 +254,13 @@ const Wallet = () => {
                       </div>
 
                       <div>
-                        <p className="text-green-500 text-base font-semibold">
+                        <p
+                          className={`text-base font-semibold ${
+                            Number(Item.amount) < 0
+                              ? "text-red-500"
+                              : "text-green-500"
+                          }`}
+                        >
                           {Item.amount}
                         </p>
                       </div>
