@@ -17,6 +17,5 @@ public interface PaymentService {
 
 	PaymentResponse createRazorPaymentLink(User user , Long amount , Long orderId) throws RazorpayException;
 	
-	PaymentResponse createStripePaymentLink(User user , Long amount, Long orderId ) throws StripeException;
 	
 }

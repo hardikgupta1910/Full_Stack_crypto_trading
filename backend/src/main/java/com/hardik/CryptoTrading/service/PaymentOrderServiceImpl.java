@@ -15,17 +15,12 @@ import com.razorpay.Payment;
 import com.razorpay.PaymentLink;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
-import com.stripe.exception.StripeException;
-import com.stripe.model.checkout.Session;
-import com.stripe.param.checkout.SessionCreateParams;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -65,38 +60,6 @@ public class PaymentOrderServiceImpl implements PaymentService {
 		return paymentOrderRepository.findById(id).orElseThrow(() -> new Exception("payment order not found"));
 	}
 	
-//	@Override
-//	public Boolean ProceedPaymentOrder(PaymentOrder paymentOrder, String paymentId) throws RazorpayException {
-//
-//		if (paymentOrder.getStatus() == null) {
-//
-//			paymentOrder.setStatus(PaymentOrderStatus.PENDING);
-//		}
-//
-//		if (paymentOrder.getStatus().equals(PaymentMethod.RAZORPAY)) {
-//			if (paymentOrder.getPaymentMethod().equals(PaymentMethod.RAZORPAY)) {
-//
-//				RazorpayClient razorpay = new RazorpayClient(apiKey, apiSecretKey);
-//				Payment payment = razorpay.payments.fetch(paymentId);
-//
-//				Integer amount = payment.get("amount");
-//				String status = payment.get("status");
-//
-//				if (status.equals("captured")) {
-//					paymentOrder.setStatus((PaymentOrderStatus.SUCCESS));
-//					return true;
-//				}
-//				paymentOrder.setStatus(PaymentOrderStatus.FAILED);
-//				paymentOrderRepository.save(paymentOrder);
-//				return false;
-//			}
-//			paymentOrder.setStatus(PaymentOrderStatus.SUCCESS);
-//			paymentOrderRepository.save(paymentOrder);
-//			return true;
-//		}
-//
-//		return false;
-//	}
 
 	
 	@Override
@@ -199,39 +162,5 @@ public class PaymentOrderServiceImpl implements PaymentService {
 		
 	}
 	
-	@Override
-	public PaymentResponse createStripePaymentLink(User user, Long amount, Long orderId) throws StripeException {
-		
-		SessionCreateParams params = SessionCreateParams.builder()
-				.addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
-				.setMode(SessionCreateParams.Mode.PAYMENT)
-				.setSuccessUrl("http://localhost:5173/wallet?order_id=" + orderId)
-				.setCancelUrl("http://localhost:5173/payment/cancel")
-				.addLineItem(
-						SessionCreateParams.LineItem.builder()
-								.setQuantity(1L)
-								.setPriceData(
-										SessionCreateParams.LineItem.PriceData.builder()
-												.setCurrency("usd")
-												.setUnitAmount(amount * 100L) // Stripe uses amount in cents
-												.setProductData(
-														SessionCreateParams.LineItem.PriceData.ProductData.builder()
-																.setName("Top up wallet")
-																.build()
-												)
-												.build()
-								)
-								.build()
-				)
-				.build();
-		
-		Session session = Session.create(params);
-		System.out.println("session = " + session.getUrl());
-		
-		PaymentResponse res = new PaymentResponse();
-		res.setPaymentUrl(session.getUrl());
-		
-		
-		return res;
-	}
+	
 }
