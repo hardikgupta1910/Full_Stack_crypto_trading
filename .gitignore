@@ -2,11 +2,20 @@
 .idea/
 *.iml
 
+# VS Code
+.vscode/
+
 # Maven
 target/
 
 # Node
 node_modules/
+dist/
+build/
+
+# Logs
+logs/
+*.log
 
 # OS
 .DS_Store
@@ -15,7 +24,6 @@ Thumbs.db
 # Env files
 .env
 .env.*
-
 
 # Local env config
 backend/src/main/resources/application-local.properties
