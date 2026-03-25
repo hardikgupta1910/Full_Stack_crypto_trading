@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
 @RequestMapping("/ai/chat")
 public class ChatbotController {
@@ -24,8 +25,6 @@ public class ChatbotController {
 	@PostMapping
 	public ResponseEntity<CBApiResponse> getCoinDetails(@RequestBody PromptBody prompt) throws Exception {
 		
-		
-		
 		CBApiResponse response=cbService.getCoinDetails(prompt.getPrompt());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
@@ -35,8 +34,7 @@ public class ChatbotController {
 		
 		String response= cbService.simpleChat(prompt.getPrompt());
 		
-//		CBApiResponse response=new CBApiResponse();
-//		response.setMessage(prompt.getPrompt());
+
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }

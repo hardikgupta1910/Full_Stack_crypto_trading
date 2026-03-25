@@ -29,8 +29,9 @@ public class WatchlistServiceImpl implements WatchlistService{
 		
 		Watchlist watchlist=new Watchlist();
 		watchlist.setUser(user);
-		
+
 		return watchlistRepository.save(watchlist);
+		
 	}
 	
 	@Override

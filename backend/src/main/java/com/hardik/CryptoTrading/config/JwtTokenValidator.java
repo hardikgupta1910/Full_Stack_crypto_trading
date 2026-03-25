@@ -3,7 +3,6 @@ package com.hardik.CryptoTrading.config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,11 +13,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 public class JwtTokenValidator extends OncePerRequestFilter {
@@ -33,9 +30,13 @@ public class JwtTokenValidator extends OncePerRequestFilter {
 			
 			try{
 				
-				SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRETE_KEY.getBytes(StandardCharsets.UTF_8)); //Keys.hmacShaKeyFor(JwtConstant.SECRETE_KEY.getBytes());
+				SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRETE_KEY.getBytes(StandardCharsets.UTF_8));
 				
-				Claims claims= (Claims) Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
+				Claims claims= (Claims) Jwts.parserBuilder()
+						.setSigningKey(key)
+						.build()
+						.parseClaimsJws(jwt)
+						.getBody();
 				
 				 String email= String.valueOf(claims.get("email"));
 				 
@@ -55,7 +56,7 @@ public class JwtTokenValidator extends OncePerRequestFilter {
 				
 				
 			} catch (Exception e) {
-//				throw new RuntimeException("invalid token...");
+
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
 				response.setContentType("application/json");
 				response.getWriter().write("{\"error\": \"Invalid or expired token\"}");

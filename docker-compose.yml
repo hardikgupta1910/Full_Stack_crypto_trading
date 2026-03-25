@@ -1,4 +1,7 @@
-# version: "3.8"
+
+
+
+version: "3.8"
 
 services:
 
@@ -9,21 +12,31 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: Trading
+      
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   backend:
     build: ./backend
     container_name: cryptrix-backend
     restart: always
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     ports:
       - "5454:5454"
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      RAZORPAY_API_KEY: ${RAZORPAY_API_KEY}
+      RAZORPAY_API_SECRET: ${RAZORPAY_API_SECRET}
 
   frontend:
     build: ./frontend

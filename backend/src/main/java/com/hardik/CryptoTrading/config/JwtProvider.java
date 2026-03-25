@@ -5,14 +5,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-
 import javax.crypto.SecretKey;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import static org.aspectj.bridge.Version.getTime;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 
@@ -41,7 +38,11 @@ public static String generateToken(Authentication auth){
 	// by this method we can access email by proving jwt token
 	public static String getEmailFromToken(String token){
 		token=token.substring(7);
-		Claims claims= (Claims) Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token ).getBody();
+		Claims claims= (Claims) Jwts.parserBuilder()
+				.setSigningKey(key)
+				.build()
+				.parseClaimsJws(token )
+				.getBody();
 		
 		
 		String email= String.valueOf(claims.get("email"));
